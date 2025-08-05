@@ -1,0 +1,25 @@
+function Message({ msg, currentUser }) {
+  return (
+    <div style={{
+      background: msg.user === currentUser ? '#722F37' : '#8D4E53',
+      color: 'white',
+      padding: '10px',
+      margin: '5px',
+      borderRadius: msg.user === currentUser ? '15px 15px 0 15px' : '15px 15px 15px 0',
+      alignSelf: msg.user === currentUser ? 'flex-end' : 'flex-start',
+      maxWidth: '70%'
+    }}>
+      <div style={{ fontWeight: 'bold' }}>{msg.user}</div>
+      {msg.text}
+      {msg.voiceNote && <audio controls src={msg.voiceNote} style={{ width: '100%' }} />}
+      <div style={{ 
+        fontSize: '0.8em',
+        textAlign: 'right',
+        marginTop: '5px'
+      }}>
+        {new Date(msg.timestamp).toLocaleTimeString()}
+        {msg.isRead && ' ✓✓'}
+      </div>
+    </div>
+  );
+}
