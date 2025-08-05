@@ -1,0 +1,36 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Checkout code
+      - uses: actions/checkout@v3
+
+      # 2. Login to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      # 3. Build & push backend
+      - name: Build Backend
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/chat-backend:latest ./backend
+
+      - name: Push Backend
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/chat-backend:latest
+
+      # 4. Build & push frontend
+      - name: Build Frontend
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/chat-frontend:latest ./frontend
+
+      - name: Push Frontend
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/chat-frontend:latest
