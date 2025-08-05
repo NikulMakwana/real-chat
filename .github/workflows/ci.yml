@@ -28,7 +28,7 @@ jobs:
 
       # 4. Build & push frontend
       - name: Build Frontend
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/chat-frontend:latest ./frontend
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/chat-frontend:latest -f frontend/Dockerfile frontend/
 
       - name: Push Frontend
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/chat-frontend:latest
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/chat-frontend:latest -f frontend/Dockerfile frontend/
