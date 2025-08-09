@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "chat-app.fullname" . }}-backend  # Better naming with Helm helpers
+  labels:
+    app: {{ include "chat-app.name" . }}-backend    # Standard labels for Kubernetes
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.backend.replicaCount | default 2 }}  # Flexible replica count
+  selector:
+    matchLabels:
+      app: {{ include "chat-app.name" . }}-backend          # Required for Deployment
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0                                   # Zero-downtime deployments
+  template:
+    metadata:
+      labels:
+        app: {{ include "chat-app.name" . }}-backend      # Matches selector
+        tier: backend
+    spec:
+      containers:
+      - name: backend
+        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"  # Full image reference
+        imagePullPolicy: {{ .Values.backend.image.pullPolicy | default "IfNotPresent" }}
+        ports:
+        - containerPort: {{ .Values.backend.service.port | default 4000 }}
+        env:
+        - name: NODE_ENV
+          value: {{ .Values.backend.env.NODE_ENV | default "production" }}  # Environment variables
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.backend.service.port | default 4000 }}
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: {{ .Values.backend.service.port | default 4000 }}
+          initialDelaySeconds: 5
+          periodSeconds: 5

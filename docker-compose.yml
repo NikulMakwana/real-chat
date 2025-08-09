@@ -1,0 +1,65 @@
+services:
+  # MongoDB (persistent data)
+  mongodb:
+    image: mongo:6
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: chatdb123
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017 --quiet
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Redis for Socket.io scaling
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+
+  # Backend (Node.js + Socket.io)
+  backend:
+    build: ./backend
+    ports:
+      - "4000:4000"
+    environment:
+      - MONGODB_URI=mongodb://root:chatdb123@mongodb:27017/chatdb?authSource=admin
+      - REDIS_URL=redis://redis:6379
+      - FRONTEND_URL=http://frontend:3000
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - node_modules_data:/app/node_modules # FIX: Use a named volume here
+    # The named volume is defined below.
+
+  # Frontend (React)
+  frontend:
+    build: ./frontend
+    ports:
+      - "3001:80"
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:4000
+    volumes:
+      - ./frontend:/app
+      - node_modules_data:/app/node_modules # FIX: Use the same named volume
+    stdin_open: true
+    depends_on:
+      - backend
+
+volumes:
+  mongodb_data:
+  redis_data:
+  node_modules_data: # Define the named volume here

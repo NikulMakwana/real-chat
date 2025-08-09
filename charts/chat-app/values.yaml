@@ -1,0 +1,16 @@
+replicaCount: 2
+
+image:
+  repository: chat-app
+  tag: 1.0
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 3001
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
