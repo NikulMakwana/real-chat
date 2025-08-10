@@ -108,25 +108,42 @@ helm upgrade rtalk ./chart --set canary.enabled=false
 
 ```
 rtalk/
-├── backend/               # Node.js application
-├── frontend/              # React application
-├── k8s/                   # Kubernetes YAML files
-│   ├── redis-deployment.yaml
-│   ├── mongodb-deployment.yaml
-│   ├── frontend-deployment.yaml
-│   └── backend-deployment.yaml
-├── chart/                 # Helm chart for Kubernetes deployment
-│   ├── Chart.yaml         # Chart metadata
-│   ├── values.yaml        # Default values for the chart
-│   └── templates/         # YAML templates for K8s resources
+├── backend/
+├── frontend/
+├── k8s/
+│   ├── config/
+│   │   ├── ingress.yaml
+│   │   └── namespace.yaml
+│   ├── deployments/
+│   │   ├── backend-deployment.yaml
+│   │   ├── frontend-deployment.yaml
+│   │   ├── mongodb-deployment.yaml
+│   │   └── redis-deployment.yaml
+│   ├── services/
+│   │   ├── backend-service.yaml
+│   │   ├── frontend-service.yaml
+│   │   ├── mongodb-service.yaml
+│   │   └── redis-service.yaml
+│   └── volumes/
+│       └── mongodb-pvc.yaml
+├── chart/
+│   ├── Chart.yaml
+│   ├── values.yaml
+│   └── templates/
 │       ├── backend/
 │       │   ├── deployment.yaml
 │       │   └── service.yaml
 │       ├── frontend/
 │       │   ├── deployment.yaml
 │       │   └── service.yaml
+│       ├── mongodb/
+│       │   ├── deployment.yaml
+│       │   └── service.yaml
+│       ├── redis/
+│       │   ├── deployment.yaml
+│       │   └── service.yaml
 │       └── _helpers.tpl
-├── docker-compose.yaml    # Local development environment
+├── docker-compose.yaml
 └── README.md
 ```
 
