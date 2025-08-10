@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "chat-app-chart.fullname" . }}-mongodb
+  labels:
+    {{- include "chat-app-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.mongodb.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "chat-app-chart.name" . }}-mongodb
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "chat-app-chart.name" . }}-mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: "{{ .Values.mongodb.image.repository }}:{{ .Values.mongodb.image.tag }}"
+          imagePullPolicy: {{ .Values.mongodb.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.mongodb.service.port }}
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: {{ .Values.mongodb.env.MONGO_INITDB_ROOT_USERNAME }}
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: {{ .Values.mongodb.env.MONGO_INITDB_ROOT_PASSWORD }}
