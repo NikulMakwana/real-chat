@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: chat-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: chat-backend:latest
+        imagePullPolicy: IfNotPresent  
+        ports:
+        - containerPort: 4000
+        env:
+        - name: MONGODB_URI
+          value: "mongodb://root:chatdb123@mongodb:27017/chatdb?authSource=admin"
+        - name: REDIS_URL
+          value: "redis://redis:6379"
+        - name: FRONTEND_URL
+          value: "http://frontend:80"
