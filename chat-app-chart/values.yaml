@@ -1,3 +1,16 @@
+# Default values for chat-app-chart.
+
+# These values are needed by the default Helm templates.
+# You can leave these as default and use your specific manifest files.
+serviceAccount:
+  create: false
+service:
+  type: ClusterIP
+  port: 80
+ingress:
+  enabled: false
+
+# Your application-specific values start here.
 backend:
   replicaCount: 1
   image:
