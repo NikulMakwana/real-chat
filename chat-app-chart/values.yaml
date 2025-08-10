@@ -1,0 +1,52 @@
+backend:
+  replicaCount: 1
+  image:
+    repository: chat-app-backend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port: 4000
+    targetPort: 4000
+  env:
+    MONGODB_URI: "mongodb://root:chatdb123@mongodb:27017/chatdb?authSource=admin"
+    REDIS_URL: "redis://redis:6379"
+    FRONTEND_URL: "http://frontend:80"
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: chat-app-frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port: 3001
+    targetPort: 80
+  env:
+    REACT_APP_BACKEND_URL: "http://backend:4000"
+
+mongodb:
+  replicaCount: 1
+  image:
+    repository: mongo
+    tag: "6"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 27017
+    targetPort: 27017
+  env:
+    MONGO_INITDB_ROOT_USERNAME: "root"
+    MONGO_INITDB_ROOT_PASSWORD: "chatdb123"
+
+redis:
+  replicaCount: 1
+  image:
+    repository: redis
+    tag: "7-alpine"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 6379
+    targetPort: 6379
