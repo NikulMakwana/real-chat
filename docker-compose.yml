@@ -42,8 +42,6 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/app
-      - node_modules_data:/app/node_modules 
-   
 
   # Frontend (React)
   frontend:
@@ -54,7 +52,6 @@ services:
       - REACT_APP_BACKEND_URL=http://localhost:4000
     volumes:
       - ./frontend:/app
-      - node_modules_data:/app/node_modules 
     stdin_open: true
     depends_on:
       - backend
@@ -62,4 +59,4 @@ services:
 volumes:
   mongodb_data:
   redis_data:
-  node_modules_data: 
+  node_modules_data:
