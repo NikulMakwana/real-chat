@@ -18,11 +18,8 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy the installed dependencies and application from the builder stage
 COPY --from=builder /app ./
 
-# Expose the port on which your application runs
 EXPOSE 3001
 
-# Command to run the backend application
 CMD ["npm", "start"]
